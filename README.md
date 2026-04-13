@@ -40,7 +40,6 @@ Blocos relevantes presentes no projeto:
 - **Flash NOR paralela** para armazenamento do launcher
 - **SDRAM** como memoria principal de execucao
 - **Matriz LED** controlada por `led_matrix_avalon.vhd`
-- **I2C de audio** ja integrado ao hardware
 
 Projeto Quartus:
 
