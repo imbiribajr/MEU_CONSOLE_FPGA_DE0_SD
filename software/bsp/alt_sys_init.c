@@ -2,7 +2,7 @@
  * alt_sys_init.c - HAL initialization source
  *
  * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'niosII_ps2'
- * SOPC Builder design path: F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/niosII_ps2.sopcinfo
+ * SOPC Builder design path: F:/Jogos_FPGA/MEU_CONSOLE_FPGA_DE0_SD/hardware/niosII_ps2.sopcinfo
  *
  * Generated: Sat Apr 11 20:49:33 BRT 2026
  */

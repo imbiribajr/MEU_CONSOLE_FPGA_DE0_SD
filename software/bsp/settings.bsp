@@ -4,9 +4,9 @@
         <BspVersion>default</BspVersion>
         <BspGeneratedTimeStamp>13/04/2026 13:48:45</BspGeneratedTimeStamp>
         <BspGeneratedUnixTimeStamp>1776098925392</BspGeneratedUnixTimeStamp>
-        <BspGeneratedLocation>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\bsp</BspGeneratedLocation>
+        <BspGeneratedLocation>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
-        <SopcDesignFile>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\hardware\niosII_ps2.sopcinfo</SopcDesignFile>
+        <SopcDesignFile>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\hardware\niosII_ps2.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
         <Cpu>nios2_qsys_0</Cpu>
         <SchemaVersion>1.9</SchemaVersion>

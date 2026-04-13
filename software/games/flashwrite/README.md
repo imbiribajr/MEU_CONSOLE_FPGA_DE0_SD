@@ -26,8 +26,8 @@ No fluxo final estabilizado:
 
 ## Arquivos Principais
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/main.c)
-- [launcher_flash_payload.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/launcher_flash_payload.h)
+- [main.c](./app/main.c)
+- [launcher_flash_payload.h](./app/launcher_flash_payload.h)
 
 ## Relacao Com O Boot
 
@@ -35,4 +35,4 @@ Depois de gravar a NOR com sucesso, o `flashboot` pode carregar o `launcher` aut
 
 Fluxo completo:
 
-- [BOOT_FLOW.md](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/BOOT_FLOW.md)
+- [BOOT_FLOW.md](../flashboot/BOOT_FLOW.md)

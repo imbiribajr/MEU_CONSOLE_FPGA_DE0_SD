@@ -54,7 +54,7 @@ Arquivo principal do modulo do jogo.
 
 Exemplo:
 
-- [pacman_module/main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/pacman_module/main.c)
+- [pacman_module/main.c](./app/pacman_module/main.c)
 
 Ele contem a logica real do jogo e normalmente expoe uma entry do modulo, como:
 
@@ -67,7 +67,7 @@ Wrapper minimo para transformar o modulo em app externo linkavel.
 
 Exemplo:
 
-- [pacman_module/external_main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/pacman_module/external_main.c)
+- [pacman_module/external_main.c](./app/pacman_module/external_main.c)
 
 Padrao:
 
@@ -93,13 +93,13 @@ Script responsavel por:
 
 Exemplo:
 
-- [pacman_module/build_external.bat](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/pacman_module/build_external.bat)
+- [pacman_module/build_external.bat](./app/pacman_module/build_external.bat)
 
 ## Linker Externo
 
 O build externo usa um linker especifico:
 
-- [linker_external_game.x](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/linker_external_game.x)
+- [linker_external_game.x](./app/linker_external_game.x)
 
 Esse linker existe para garantir que o ELF gerado seja adequado para:
 
@@ -198,43 +198,43 @@ endlocal
 
 Codigo de producao:
 
-- [pacman_module/main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/pacman_module/main.c)
+- [pacman_module/main.c](./app/pacman_module/main.c)
 
 Wrapper:
 
-- [pacman_module/external_main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/pacman_module/external_main.c)
+- [pacman_module/external_main.c](./app/pacman_module/external_main.c)
 
 Build:
 
 ```powershell
-cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\games\launcher\app\pacman_module
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\launcher\app\pacman_module
 .\build_external.bat
 ```
 
 Saida:
 
-- [pacman.gmod](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/gmods/pacman.gmod)
+- [pacman.gmod](./app/gmods/pacman.gmod)
 
 ### Tetris
 
 Codigo de producao:
 
-- [tetris_module/main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/tetris_module/main.c)
+- [tetris_module/main.c](./app/tetris_module/main.c)
 
 Wrapper:
 
-- [tetris_module/external_main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/tetris_module/external_main.c)
+- [tetris_module/external_main.c](./app/tetris_module/external_main.c)
 
 Build:
 
 ```powershell
-cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\games\launcher\app\tetris_module
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\launcher\app\tetris_module
 .\build_external.bat
 ```
 
 Saida:
 
-- [tetris.gmod](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/gmods/tetris.gmod)
+- [tetris.gmod](./app/gmods/tetris.gmod)
 
 ### Outros Jogos
 
@@ -256,7 +256,7 @@ Cada um possui:
 
 Os binarios finais ficam em:
 
-- [software/games/launcher/app/gmods](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/gmods)
+- [software/games/launcher/app/gmods](./app/gmods)
 
 Arquivos atuais esperados:
 

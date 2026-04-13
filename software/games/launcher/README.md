@@ -14,11 +14,10 @@ No fluxo final validado:
 
 ## Formato De Jogo No SD
 
-O formato usado no SD e o binario `GIMG`, normalmente salvo com extensao `.gmod`.
+Os jogos no SD sao armazenados como arquivos binarios `.gmod`.
 
 Campos principais:
 
-- `magic = GIMG`
 - `version = 2`
 - `segment_count`
 - `entry_addr`
@@ -49,16 +48,16 @@ Os `.gmod` gerados ficam em:
 
 Documentacao detalhada:
 
-- [EXTERNAL_BUILD.md](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/EXTERNAL_BUILD.md)
+- [EXTERNAL_BUILD.md](./EXTERNAL_BUILD.md)
 
 ## Arquivos Principais
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/main.c)
-- [launcher_image.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/launcher_image.c)
-- [launcher_storage.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/launcher_storage.c)
+- [main.c](./app/main.c)
+- [launcher_image.h](./app/launcher_image.h)
+- [launcher_storage_stub.c](./app/launcher_storage_stub.c)
 
 ## Relacao Com O Boot
 
 O fluxo de boot automatico completo foi consolidado em:
 
-- [BOOT_FLOW.md](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/BOOT_FLOW.md)
+- [BOOT_FLOW.md](../flashboot/BOOT_FLOW.md)

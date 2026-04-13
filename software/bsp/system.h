@@ -2,7 +2,7 @@
  * system.h - SOPC Builder system and BSP software package information
  *
  * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'niosII_ps2'
- * SOPC Builder design path: F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/niosII_ps2.sopcinfo
+ * SOPC Builder design path: F:/Jogos_FPGA/MEU_CONSOLE_FPGA_DE0_SD/hardware/niosII_ps2.sopcinfo
  *
  * Generated: Mon Apr 13 13:48:45 BRT 2026
  */

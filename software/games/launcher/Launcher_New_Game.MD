@@ -1,16 +1,25 @@
 # Como Inserir Um Novo Jogo No Launcher
 
-Este documento descreve o fluxo atual do projeto para adicionar um novo jogo ao launcher.
+Este documento descreve o fluxo atual para adicionar um novo jogo ao ecossistema do launcher.
 
 Importante:
 
-- hoje o `.gmod` no SD nao carrega um binario externo real
-- hoje o `.gmod` funciona como descritor de um modulo embutido no `launcher`
-- portanto, inserir um jogo novo ainda exige recompilar o `launcher` e regravar a NOR
+- o fluxo atual usa jogos externos em arquivo `.gmod`
+- o `.gmod` final e gerado a partir de um `main.elf`
+- o launcher carrega esse binario do SD para SDRAM e transfere a execucao
 
-## Fluxo Em 10 Passos
+## Fluxo Resumido
 
-### 1. Criar a pasta do modulo
+1. criar a pasta do modulo do jogo
+2. adaptar o codigo ao hardware da plataforma
+3. criar `external_main.c`
+4. criar `build_external.bat`
+5. compilar o `main.elf`
+6. gerar o `.gmod`
+7. copiar o `.gmod` para o SD
+8. iniciar o launcher e carregar o jogo
+
+## Estrutura Recomendada
 
 Crie uma pasta nova dentro de:
 
@@ -20,61 +29,32 @@ Exemplo:
 
 - `software/games/launcher/app/meujogo_module/`
 
-## 2. Colocar o codigo do jogo na pasta
-
-Coloque ali os arquivos do jogo.
-
 Estrutura minima recomendada:
 
 - `main.c`
+- `external_main.c`
 - `meujogo_module.h`
+- `build_external.bat`
 
-Se o jogo vier de outro projeto, esse e o ponto onde ele entra na arvore do launcher.
+## 1. Adaptar O Jogo Para A Plataforma
 
-## 3. Adaptar o jogo para a plataforma
-
-O `main.c` original normalmente nao entra direto sem ajuste.
-
-Voce precisa adaptar o jogo para:
+O jogo precisa ser ajustado para:
 
 - display da plataforma
-- leitura de teclado/PS2
-- temporizacao
-- defines do `system.h`
-- mapeamento de memoria e perifericos da plataforma
+- input via PS/2 e/ou UART
+- temporizacao baseada no BSP
+- includes de `system.h`
+- layout de memoria do ambiente Nios II
 
-Na pratica, os pontos mais comuns de adaptacao sao:
+Os pontos mais comuns de adaptacao sao:
 
 - render
-- input
+- leitura de entrada
 - loop principal
-- delays/ticks
-- includes de hardware
+- delays e ticks
+- acesso a periféricos
 
-## 4. Expor o modulo no formato do launcher
-
-O modulo precisa exportar um `launcher_builtin_module_t`.
-
-Exemplo:
-
-```c
-#include "meujogo_module.h"
-
-static void meujogo_entry(void)
-{
-    /* loop principal do jogo */
-}
-
-const launcher_builtin_module_t meujogo_module = {
-    "builtin:meujogo",
-    "MEU JOGO",
-    meujogo_entry
-};
-```
-
-O campo `path` precisa casar com o `builtin:` que sera usado no `.gmod`.
-
-## 5. Criar o header publico do modulo
+## 2. Criar O Header Do Modulo
 
 Exemplo de `meujogo_module.h`:
 
@@ -82,108 +62,131 @@ Exemplo de `meujogo_module.h`:
 #ifndef MEUJOGO_MODULE_H
 #define MEUJOGO_MODULE_H
 
-#include "../launcher_module.h"
-
-extern const launcher_builtin_module_t meujogo_module;
+void meujogo_module_entry(void);
 
 #endif
 ```
 
-Esse header e o contrato que o launcher usa para enxergar o modulo.
+## 3. Criar O `main.c` Do Modulo
 
-## 6. Registrar o modulo no launcher
+O `main.c` contem a logica principal do jogo e deve expor uma entry chamavel pelo wrapper externo.
 
-No arquivo:
+Exemplo simplificado:
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/main.c)
+```c
+#include "meujogo_module.h"
 
-voce precisa:
-
-- incluir o header do novo modulo
-- adicionar `&meujogo_module` no array `g_builtin_modules`
-
-Sem isso, o launcher nao vai conseguir localizar o modulo referenciado pelo `.gmod`.
-
-## 7. Incluir o modulo no build do launcher
-
-No arquivo:
-
-- [compila_grava.bat](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/compila_grava.bat)
-
-adicione a pasta do novo modulo aos argumentos:
-
-- `--src-rdir=./meujogo_module`
-- `--inc-dir=./meujogo_module`
-
-Sem isso, os arquivos do modulo nao entram na compilacao.
-
-## 8. Criar o `.gmod` correspondente
-
-O `.gmod` atual e um arquivo de texto simples.
-
-Conteudo exemplo:
-
-```text
-builtin:meujogo
-MEU JOGO
+void meujogo_module_entry(void)
+{
+    while (1) {
+        /* loop do jogo */
+    }
+}
 ```
 
-Voce pode criar manualmente ou usar o script:
+## 4. Criar O `external_main.c`
 
-- [gerar_gmod.ps1](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/scripts/gerar_gmod.ps1)
+O build externo precisa de um `main()` convencional.
+
+Exemplo:
+
+```c
+#include "meujogo_module.h"
+
+int main(void)
+{
+    meujogo_module_entry();
+    return 0;
+}
+```
+
+## 5. Criar O `build_external.bat`
+
+Esse script deve:
+
+1. gerar o `Makefile`
+2. compilar o `main.elf`
+3. empacotar o ELF em `.gmod`
+
+Modelo pratico:
+
+```bat
+@echo off
+setlocal
+
+set "NIOS_SHELL=F:\altera\13.0sp1\nios2eds\Nios_Shell.bat"
+set "MODULE_DIR=%~dp0"
+set "ROOT_DIR=%MODULE_DIR%..\..\..\..\.."
+for %%I in ("%ROOT_DIR%") do set "ROOT_DIR=%%~fI"
+
+set "BUILD_DIR=%MODULE_DIR%build_external"
+set "GMOD_PATH=%ROOT_DIR%\software\games\launcher\app\gmods\meujogo.gmod"
+set "SCRIPT_GMOD=%ROOT_DIR%\software\scripts\gerar_gmod.ps1"
+
+set "BUILD_DIR_SLASH=%BUILD_DIR:\=/%"
+set "BUILD_DIR_CYG=/cygdrive/%BUILD_DIR_SLASH:~0,1%%BUILD_DIR_SLASH:~2%"
+
+set "MODULE_DIR_SLASH=%MODULE_DIR:\=/%"
+set "MODULE_DIR_CYG=/cygdrive/%MODULE_DIR_SLASH:~0,1%%MODULE_DIR_SLASH:~2%"
+
+set "ROOT_DIR_SLASH=%ROOT_DIR:\=/%"
+set "ROOT_DIR_CYG=/cygdrive/%ROOT_DIR_SLASH:~0,1%%ROOT_DIR_SLASH:~2%"
+
+if not exist "%NIOS_SHELL%" exit /b 1
+if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
+
+cd /d "%BUILD_DIR%"
+if exist "Makefile" del /f /q "Makefile"
+
+call "%NIOS_SHELL%" sh -c "cd \"%BUILD_DIR_CYG%\" && nios2-app-generate-makefile --app-dir=. --bsp-dir=\"%ROOT_DIR_CYG%/software/bsp\" --elf-name=main.elf --src-files=\"%MODULE_DIR_CYG%/external_main.c\" --src-files=\"%MODULE_DIR_CYG%/main.c\" --inc-dir=\"%MODULE_DIR_CYG%\" --inc-dir=\"%ROOT_DIR_CYG%/hardware\""
+if not exist "Makefile" exit /b 1
+
+call "%NIOS_SHELL%" sh -c "cd \"%BUILD_DIR_CYG%\" && cp \"%ROOT_DIR_CYG%/software/games/launcher/app/linker_external_game.x\" ./linker_external_game.x && make clean all \"APP_CFLAGS_USER_FLAGS=-std=c99 -G0\" LINKER_SCRIPT=./linker_external_game.x"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+powershell -ExecutionPolicy Bypass -File "%SCRIPT_GMOD%" ^
+  -ElfPath "%BUILD_DIR%\main.elf" ^
+  -Title "MEUJOGO" ^
+  -OutputPath "%GMOD_PATH%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+echo GMOD gerado em %GMOD_PATH%
+endlocal
+```
+
+## 6. Compilar E Gerar O `.gmod`
 
 Exemplo:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File software\scripts\gerar_gmod.ps1 `
-  -BuiltinPath "builtin:meujogo" `
-  -Title "MEU JOGO" `
-  -OutputPath "software\games\launcher\app\gmods\meujogo.gmod"
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\launcher\app\meujogo_module
+.\build_external.bat
 ```
 
-## 9. Copiar o `.gmod` para o SD
+O arquivo final deve ser gerado em:
 
-Copie o arquivo `.gmod` para a pasta de jogos no cartao SD.
+- `software/games/launcher/app/gmods/meujogo.gmod`
 
-Normalmente:
+## 7. Copiar O `.gmod` Para O SD
 
-- `games/`
+Copie o `.gmod` para a pasta de jogos do cartao SD.
 
-No estado atual do projeto, esse arquivo apenas aponta para um modulo embutido no launcher.
+Exemplo:
 
-## 10. Recompilar e regravar o launcher
+- `games/meujogo.gmod`
 
-Como o jogo esta embutido no `launcher`, o passo final e:
+## 8. Executar Pelo Launcher
 
-1. recompilar o `launcher`
-2. regenerar a imagem do launcher
-3. regravar a NOR
+Com o launcher rodando:
 
-Em outras palavras:
+1. monte o SD
+2. selecione o novo item no menu
+3. carregue o jogo
 
-- mudar jogo embutido = mudar launcher
-- mudar launcher = regravar a NOR
+## Referencias
 
-## Resumo Curto
-
-Hoje o fluxo real e:
-
-1. integrar o jogo como modulo embutido
-2. criar um `.gmod` textual que aponta para esse modulo
-3. recompilar o launcher
-4. regravar a NOR
-
-## Modelo Atual Versus Modelo Futuro
-
-### Modelo atual
-
-- jogo compilado dentro do launcher
-- `.gmod` no SD e apenas um descritor textual
-
-### Modelo futuro desejado
-
-- jogo empacotado como modulo externo real
-- launcher carregando o binario diretamente do SD
-- sem recompilar o launcher para cada jogo novo
-
-Esse modelo futuro ainda nao e o fluxo usado pelos jogos atuais do projeto.
+- [README.md](./README.md)
+- [EXTERNAL_BUILD.md](./EXTERNAL_BUILD.md)
+- [main.c do launcher](./app/main.c)
+- [linker_external_game.x](./app/linker_external_game.x)
+- [gerar_gmod.ps1](../../scripts/gerar_gmod.ps1)

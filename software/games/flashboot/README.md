@@ -25,17 +25,17 @@ O `flashboot` atual espera o `launcher` em:
 
 ## Arquivos Principais
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/main.c)
-- [linker_flashboot.x](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/linker_flashboot.x)
-- [flashboot_image.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/flashboot_image.h)
+- [main.c](./app/main.c)
+- [linker_flashboot.x](./app/linker_flashboot.x)
+- [flashboot_image.h](./app/flashboot_image.h)
 
 ## Scripts Relacionados
 
 - gerar imagem do launcher:
-  [gerar_launcher_flash_image.ps1](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/scripts/gerar_launcher_flash_image.ps1)
+  [gerar_launcher_flash_image.ps1](../../scripts/gerar_launcher_flash_image.ps1)
 - gerar `onchip_mem.hex`:
-  [gerar_onchip_hex.bat](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/gerar_onchip_hex.bat)
+  [gerar_onchip_hex.bat](./app/gerar_onchip_hex.bat)
 
 ## Documentacao Completa
 
-- [BOOT_FLOW.md](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/BOOT_FLOW.md)
+- [BOOT_FLOW.md](./BOOT_FLOW.md)

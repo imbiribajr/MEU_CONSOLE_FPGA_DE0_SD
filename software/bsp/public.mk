@@ -87,11 +87,11 @@ ACDS_VERSION := 13.0sp1
 
 # Quartus Generated JDI File. Required for resolving node instance ID's with 
 # design component names. 
-JDI_FILE := F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/DriverVHDL.jdi
+JDI_FILE := F:/Jogos_FPGA/MEU_CONSOLE_FPGA_DE0_SD/hardware/DriverVHDL.jdi
 
 # Qsys--generated SOPCINFO file. Required for resolving node instance ID's with 
 # design component names. 
-SOPCINFO_FILE := F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/niosII_ps2.sopcinfo
+SOPCINFO_FILE := F:/Jogos_FPGA/MEU_CONSOLE_FPGA_DE0_SD/hardware/niosII_ps2.sopcinfo
 
 # Big-Endian operation. 
 # setting BIG_ENDIAN is false

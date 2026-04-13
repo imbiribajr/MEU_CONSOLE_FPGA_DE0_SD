@@ -15,7 +15,7 @@ Ao ligar a placa:
 ## Blocos Do Sistema
 
 - `launcher`
-  Menu principal. Roda em SDRAM e carrega jogos binarios `.gmod`/`.gimg` do SD.
+  Menu principal. Roda em SDRAM e carrega jogos binarios `.gmod` do SD.
 
 - `flashwrite`
   Aplicativo utilitario que grava a imagem empacotada do `launcher` no inicio da flash paralela.
@@ -168,12 +168,12 @@ Artefato principal:
 
 O script:
 
-- [gerar_launcher_flash_image.ps1](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/scripts/gerar_launcher_flash_image.ps1)
+- [gerar_launcher_flash_image.ps1](../../scripts/gerar_launcher_flash_image.ps1)
 
 gera:
 
-- [launcher_flash.img](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/launcher_flash.img)
-- [launcher_flash_payload.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/launcher_flash_payload.h)
+- [launcher_flash.img](../launcher/app/launcher_flash.img)
+- [launcher_flash_payload.h](../flashwrite/app/launcher_flash_payload.h)
 
 Essa imagem precisa corresponder ao `launcher` que voce quer subir no boot.
 
@@ -181,8 +181,8 @@ Essa imagem precisa corresponder ao `launcher` que voce quer subir no boot.
 
 O `flashwrite` usa:
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/main.c)
-- [launcher_flash_payload.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/launcher_flash_payload.h)
+- [main.c](../flashwrite/app/main.c)
+- [launcher_flash_payload.h](../flashwrite/app/launcher_flash_payload.h)
 
 para:
 
@@ -220,7 +220,7 @@ O linker do `flashboot` precisa manter:
 
 Arquivo:
 
-- [linker_flashboot.x](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/linker_flashboot.x)
+- [linker_flashboot.x](./app/linker_flashboot.x)
 
 ### 6. Robustez de power-on na leitura da NOR
 
@@ -236,15 +236,15 @@ Isso e necessario porque o boot real ocorre imediatamente apos a configuracao, a
 
 Depois de compilar o `flashboot`, e preciso gerar:
 
-- [hardware/onchip_mem.hex](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/onchip_mem.hex)
+- [hardware/onchip_mem.hex](../../../hardware/onchip_mem.hex)
 
 com:
 
-- [gerar_onchip_hex.bat](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/gerar_onchip_hex.bat)
+- [gerar_onchip_hex.bat](./app/gerar_onchip_hex.bat)
 
 Esse passo tambem atualiza:
 
-- [NiosII_ps2_onchip_memory2_0.hex](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/hardware/NiosII_ps2/synthesis/submodules/NiosII_ps2_onchip_memory2_0.hex)
+- [NiosII_ps2_onchip_memory2_0.hex](../../../hardware/NiosII_ps2/synthesis/submodules/NiosII_ps2_onchip_memory2_0.hex)
 
 ### 8. Hardware recompilado usando esse HEX
 
@@ -274,14 +274,14 @@ Use esta ordem quando quiser atualizar o boot completo da plataforma.
 No PowerShell:
 
 ```powershell
-cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\games\launcher\app
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\launcher\app
 .\compila_grava.bat
 ```
 
 ### 2. Regenerar a imagem do launcher para a NOR
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\scripts\gerar_launcher_flash_image.ps1"
+powershell -ExecutionPolicy Bypass -File "F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\scripts\gerar_launcher_flash_image.ps1"
 ```
 
 Isso atualiza:
@@ -292,7 +292,7 @@ Isso atualiza:
 ### 3. Recompilar o flashwrite
 
 ```powershell
-cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\games\flashwrite\app
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\flashwrite\app
 .\compila_grava.bat
 ```
 
@@ -309,7 +309,7 @@ No fluxo atual validado, o `launcher` e gravado a partir de:
 ### 5. Recompilar o flashboot
 
 ```powershell
-cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_AUDIO_DE0\software\games\flashboot\app
+cd F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\games\flashboot\app
 .\compila_grava.bat
 ```
 
@@ -423,17 +423,17 @@ Entao:
 
 ### Flashboot
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/main.c)
-- [flashboot_image.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/flashboot_image.h)
-- [linker_flashboot.x](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/linker_flashboot.x)
-- [gerar_onchip_hex.bat](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashboot/app/gerar_onchip_hex.bat)
+- [main.c](./app/main.c)
+- [flashboot_image.h](./app/flashboot_image.h)
+- [linker_flashboot.x](./app/linker_flashboot.x)
+- [gerar_onchip_hex.bat](./app/gerar_onchip_hex.bat)
 
 ### Gravacao Da NOR
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/main.c)
-- [launcher_flash_payload.h](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/flashwrite/app/launcher_flash_payload.h)
-- [gerar_launcher_flash_image.ps1](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/scripts/gerar_launcher_flash_image.ps1)
+- [main.c](../flashwrite/app/main.c)
+- [launcher_flash_payload.h](../flashwrite/app/launcher_flash_payload.h)
+- [gerar_launcher_flash_image.ps1](../../scripts/gerar_launcher_flash_image.ps1)
 
 ### Launcher
 
-- [main.c](F:/Jogos_FPGA/MEU_CONSOLE_FPGA_AUDIO_DE0/software/games/launcher/app/main.c)
+- [main.c](../launcher/app/main.c)
