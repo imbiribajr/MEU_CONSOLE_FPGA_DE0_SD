@@ -2,6 +2,8 @@
 
 Console de games em FPGA baseado em **Nios II**, com **launcher residente em flash NOR**, jogos carregados a partir de **cartao SD**, entrada por **teclado PS/2** e suporte a controle via **UART/Bluetooth**.
 
+English version: [README.en.md](./README.en.md)
+
 O projeto foi desenvolvido para a familia **Intel/Altera Cyclone III** usando **Quartus II 13.0 SP1** e **Nios II EDS 13.0 SP1**. O hardware integra CPU Nios II, SDRAM, interface PS/2, UART, SPI para SD card, controlador de flash paralela e saida para matriz de LED.
 
 ## Visao Geral
@@ -306,4 +308,4 @@ Pelo estado atual do repositório:
 
 ## Licenca
 
-Este repositório ainda nao possui um arquivo de licenca dedicado. Se voce pretende publicar o projeto para contribuicoes externas, vale adicionar um `LICENSE` explicito.
+Este projeto usa a licenca [MIT](./LICENSE).
