@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                // Caminhos diretos para as subpastas
+                "${workspaceFolder}/software/bsp",
+                "${workspaceFolder}/software/scripts",
+                "${workspaceFolder}/software/bsp/HAL/inc",
+                "${workspaceFolder}/software/bsp/drivers/inc",
+                "${workspaceFolder}/led-sim-platform/c",
+                
+                // Caminhos do Compilador (Mantenha como estava)
+                "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include/**",
+                "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include/sys",
+                "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/lib/gcc/nios2-elf/4.1.2/include",
+                "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/lib/gcc/nios2-elf/4.1.2/include-fixed",
+                "F:/altera/13.0sp1/nios2eds/bin"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "__nios2__"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/bin/nios2-elf-gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x86"
+        }
+    ],
+    "version": 4
+}

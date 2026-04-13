@@ -1,0 +1,72 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1. Compilar BSP",
+            "type": "shell",
+            "command": "make",
+            "args": ["clean","all"],
+            "options": {
+                // Ajustado para entrar na subpasta do BSP a partir da raiz
+                "cwd": "${workspaceFolder}/software/bsp" 
+            },
+            "group": "build"
+        },
+        {
+            "label": "2. Compilar Jogo (App)",
+            "type": "shell",
+            "command": "make",
+            "args": ["clean","all",
+            "APP_CFLAGS_USER_FLAGS=-std=c99"  
+            ],
+            "options": {
+                // Ajustado para entrar na subpasta do Código C
+                "cwd": "${workspaceFolder}/software/app"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "3. Gravar Jogo",
+            "type": "shell",
+            "command": "F:/altera/13.0sp1/nios2eds/Nios_Shell.bat",
+            "args": [
+                "sh",
+                "-c",
+                "nios2-download -g main.elf --accept-bad-sysid && nios2-terminal"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/software/app"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "4. Limpar Tudo (Clean)",
+            "type": "shell",
+            "command": "make clean",
+            "options": {
+                "cwd": "${workspaceFolder}/software/app"
+            }
+        },
+                {
+            "label": "6 Gravar Hardware (.sof)",
+            "type": "shell",
+            "command": "quartus_pgm",
+            "args": [
+                "-m",
+                "jtag",
+                "-c",
+                "USB-Blaster", // Nome do cabo (geralmente é esse)
+                "-o",
+                "\"p;hardware/output_files/DriverVHDL.sof\"" 
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/.."
+            },
+            "problemMatcher": []
+        }
+    ]
+}

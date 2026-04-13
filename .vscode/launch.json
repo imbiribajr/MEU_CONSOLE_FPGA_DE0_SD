@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Nios II (Auto Server)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/software/app/main.elf",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/software/app",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            
+            // 1. Caminho do Cliente GDB
+            "miDebuggerPath": "F:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/bin/nios2-elf-gdb.exe",
+            
+            // 2. Caminho do Servidor (CRUCIAL para automação)
+            "debugServerPath": "F:/altera/13.0sp1/nios2eds/bin/nios2-gdb-server.exe",
+            
+            // 3. Argumentos EXATOS que funcionaram no seu teste manual
+            "debugServerArgs": "--tcpport 3333 --stop",
+            
+            "miDebuggerServerAddress": "localhost:3333",
+            
+            // Dá tempo para o servidor iniciar antes de tentar conectar
+            "serverLaunchTimeout": 5000,
+            
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    // Força a parada caso o --stop falhe
+                    "text": "monitor stop",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

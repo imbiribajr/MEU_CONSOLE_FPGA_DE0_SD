@@ -1,0 +1,154 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity ps2_avalon_interface is
+    port (
+        clk          : in    std_logic;
+        reset_n      : in    std_logic;
+
+        -- Avalon-MM (read-only slave)
+        avs_read     : in    std_logic;
+        avs_readdata : out   std_logic_vector(31 downto 0);
+
+        -- PS/2 pins
+        PS2_CLK      : inout std_logic;
+        PS2_DAT      : inout std_logic
+    );
+end entity;
+
+architecture rtl of ps2_avalon_interface is
+
+    component ps2_keyboard is
+        port (
+            clk, reset : in std_logic;
+
+            ps2_clk_en_o, ps2_data_en_o : out std_logic;
+            ps2_clk_i, ps2_data_i       : in  std_logic;
+
+            rx_scan_code  : out std_logic_vector(7 downto 0);
+            rx_data_ready : out std_logic;
+            rx_read       : in  std_logic;
+
+            rx_extended, rx_released, rx_shift_key_on : out std_logic;
+            rx_ascii : out std_logic_vector(7 downto 0);
+
+            tx_data  : in std_logic_vector(7 downto 0);
+            tx_write : in std_logic;
+            translate: in std_logic;
+
+            tx_write_ack_o, tx_error_no_keyboard_ack : out std_logic
+        );
+    end component;
+
+    -- Reset
+    signal reset_high : std_logic;
+
+    -- PS/2 IO
+    signal ps2_clk_in, ps2_dat_in : std_logic;
+    signal ps2_clk_en, ps2_dat_en : std_logic;
+
+    -- PS/2 core outputs
+    signal scan_code_wire  : std_logic_vector(7 downto 0);
+    signal data_ready_wire : std_logic;
+
+    -- Avalon interface registers
+    signal stored_code    : std_logic_vector(7 downto 0) := (others => '0');
+    signal has_data_flag  : std_logic := '0';
+
+    -- Handshake pulse to ps2_keyboard
+    signal rx_read_pulse  : std_logic := '0';
+
+    -- Avalon read pulse detection
+    signal avs_read_d     : std_logic := '0';
+    signal read_pulse     : std_logic := '0';
+
+begin
+
+    ----------------------------------------------------------------
+    -- Reset
+    ----------------------------------------------------------------
+    reset_high <= not reset_n;
+
+    ----------------------------------------------------------------
+    -- PS/2 keyboard core
+    ----------------------------------------------------------------
+    u0 : ps2_keyboard
+        port map (
+            clk   => clk,
+            reset => reset_high,
+
+            ps2_clk_i     => ps2_clk_in,
+            ps2_data_i    => ps2_dat_in,
+            ps2_clk_en_o  => ps2_clk_en,
+            ps2_data_en_o => ps2_dat_en,
+
+            rx_scan_code  => scan_code_wire,
+            rx_data_ready => data_ready_wire,
+            rx_read       => rx_read_pulse,
+
+            tx_data  => (others => '0'),
+            tx_write => '0',
+            translate => '1',  -- IMPORTANTE
+
+            rx_extended => open,
+            rx_released => open,
+            rx_shift_key_on => open,
+            rx_ascii => open,
+            tx_write_ack_o => open,
+            tx_error_no_keyboard_ack => open
+        );
+
+    ----------------------------------------------------------------
+    -- PS/2 tristate
+    ----------------------------------------------------------------
+    ps2_clk_in <= PS2_CLK;
+    ps2_dat_in <= PS2_DAT;
+
+    PS2_CLK <= '0' when ps2_clk_en = '0' else 'Z';
+    PS2_DAT <= '0' when ps2_dat_en = '0' else 'Z';
+
+    ----------------------------------------------------------------
+    -- Main logic
+    ----------------------------------------------------------------
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            -- defaults
+            rx_read_pulse <= '0';
+
+            -- detect Avalon read pulse (rising edge)
+            avs_read_d <= avs_read;
+            read_pulse <= avs_read and (not avs_read_d);
+
+            if reset_n = '0' then
+                stored_code   <= (others => '0');
+                has_data_flag <= '0';
+                avs_read_d    <= '0';
+                read_pulse    <= '0';
+
+            else
+                -- Capture byte from PS/2 core (only if buffer empty)
+                if (data_ready_wire = '1') and (has_data_flag = '0') then
+                    stored_code   <= scan_code_wire;
+                    has_data_flag <= '1';
+                    rx_read_pulse <= '1';  -- ACK real ao core
+
+                -- Clear flag only on READ pulse from Avalon
+                elsif (read_pulse = '1') and (has_data_flag = '1') then
+                    has_data_flag <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
+
+    ----------------------------------------------------------------
+    -- Avalon read data
+    -- bit31 = flag (sticky)
+    -- bits7..0 = scan code
+    ----------------------------------------------------------------
+    avs_readdata <= has_data_flag &
+                    "00000000000000000000000" &
+                    stored_code;
+
+end architecture;

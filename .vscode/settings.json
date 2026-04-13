@@ -1,0 +1,124 @@
+{
+    "actionButtons": {
+        "defaultColor": "#ffffff", // Cor do texto
+        "reloadButton": "♻️", // Botão para recarregar lista
+        "commands": [
+            {
+                "cwd": "${workspaceFolder}/software/scripts", 
+                "name": "$(circuit-board) Generate Qsys (1)",
+                "color": "#9b59b6",
+                "singleInstance": true,
+                "command": ".\\Generate_Qsys.bat"
+            },
+
+            {
+                "cwd": "${workspaceFolder}/hardware", 
+                "name": "$(chip) Sintetizar VHDL (2)",
+                "color": "#d9534f",
+                "singleInstance": true,
+                "command": "F:\\altera\\13.0sp1\\nios2eds\\Nios_Shell.bat sh -c \"quartus_sh --flow compile DriverVHDL\""
+            },
+
+            {
+                "cwd": "${workspaceFolder}/hardware/output_files/",
+                "name": "$(zap) Gravar FPGA (3)",
+                "color": "#5cb85c",
+                "singleInstance": true,
+                "command": "F:\\altera\\13.0sp1\\nios2eds\\Nios_Shell.bat sh -c \"quartus_pgm -m jtag -c USB-Blaster -o 'p;DriverVHDL.sof'\""
+            },
+            {
+                "cwd": "${workspaceFolder}/software/bsp",
+                "name": "$(sync) Regenerar BSP (4)",
+                "color": "#8e44ad", 
+                "singleInstance": true,
+                "command": "F:\\altera\\13.0sp1\\nios2eds\\Nios_Shell.bat sh -c \"nios2-bsp-generate-files --settings=settings.bsp --bsp-dir=.\""
+            },  
+            
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(gear) Compila BSP (5)",
+                "color": "#8e441d", 
+                "singleInstance": true,
+                "command": ".\\compila_BSP.bat"
+            },
+                    
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(gear) Compilar C (6)",
+                "color": "#4d90fe",
+                "singleInstance": true,
+                "command": ".\\compilar.bat"
+            },
+                    
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(desktop-download) Gravar Firmware (7)",
+                "color": "#f0ad4e",
+                "singleInstance": true,
+                "command": ".\\gravar_firmware.bat"
+            },
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(rocket) Compila e Grava (8)",
+                "color": "#4d9000",
+                "singleInstance": true,
+                "command": ".\\compila_grava.bat" 
+            },
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(plug) Liberar JTAG (9)",
+                "color": "#d9536f",
+                "singleInstance": true,
+                "command": ".\\desconectar.bat"
+            },
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(terminal) Reabrir Terminal Nios2",
+                "color": "#3498db",
+                "singleInstance": true,
+                "command": ".\\reabrir_terminal_nios2.bat"
+            },
+            {
+                "cwd": "${workspaceFolder}/led-sim-platform",
+                "name": "$(triangle-right) Rodar Simulacao",
+                "color": "#2ecc71",
+                "singleInstance": true,
+                "command": "npm run dev"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "$(repo-sync) Sincronizar Real -> Sim",
+                "color": "#1abc9c",
+                "singleInstance": true,
+                "command": "powershell -ExecutionPolicy Bypass -File .\\led-sim-platform\\sync_real_to_sim.ps1"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "$(repo-sync) Sincronizar Sim -> Real",
+                "color": "#16a085",
+                "singleInstance": true,
+                "command": "powershell -ExecutionPolicy Bypass -Command \"Copy-Item -Path .\\led-sim-platform\\c\\main.c -Destination .\\software\\app\\main.c\""
+            },
+            {
+                "cwd": "${workspaceFolder}/software/scripts",
+                "name": "$(gear) Compilar Nios (main.elf) - escolher .c",
+                "color": "#4d90fe",
+                "singleInstance": true,
+                "command": ".\\compilar_nios.bat"
+            }
+            
+                         
+        ]
+    },
+
+    // ADICIONE ESTE BLOCO:
+    "files.associations": {
+    "*.bak": "c"
+    },
+
+    // ADICIONE ESTA LINHA COM O CAMINHO DO SEU F:
+    "git.path": "F:\\Program Files\\Git\\cmd\\git.exe",
+    "terminal.integrated.env.windows": {
+        "PATH": "F:\\Jogos_FPGA\\MEU_CONSOLE_FPGA_DE0_SD\\software\\scripts;${env:PATH}"
+    }
+}

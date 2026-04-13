@@ -1,0 +1,47 @@
+Esse comportamento onde a memória falha exatamente ao atingir o bit A15 = 1 (o que corresponde à marca de 32 KBytes no barramento de endereços) é um sintoma muito clássico em projetos com o Nios II e memórias Flash.
+
+Existem três motivos principais que causam esse problema específico, sendo o primeiro o mais provável para a placa DE0.
+
+1. Interferência do Cache de Dados do Nios II (Causa mais provável)
+O processador Nios II (na versão /f) frequentemente é configurado com um cache de dados em hardware de 16 KB ou 32 KB. O uso de ponteiros volatile no seu código em C não faz o bypass do cache no Nios II.
+
+O que acontece: Quando o seu código atinge o endereço 0x8000 (A15 = 1, ou seja, 32 KB de deslocamento), o endereço entra em conflito (alias) com a linha zero do cache. Para carregar o novo endereço, o Nios II faz um cache eviction (despejo de cache), forçando uma escrita automática em rajada na memória Flash para salvar os dados antigos de volta na memória.
+
+O Erro: Se esse eviction ocorrer exatamente no meio da sua sequência de comandos CFI (por exemplo, entre o segundo ciclo de Unlock e a escrita do comando de Erase), essa escrita em rajada indesejada interrompe e corrompe a máquina de estados do controlador da Flash. O comando falha silenciosamente e a memória não apaga.
+
+Como resolver: Você nunca deve acessar a Flash usando ponteiros comuns ao enviar comandos CFI. Utilize as macros de leitura e escrita direta da biblioteca <io.h> do HAL da Altera/Intel, que ignoram o cache de dados:
+
+C
+#include "io.h"
+
+// Para escrever comandos CFI (faz o bypass do cache do Nios II)
+IOWR_16DIRECT(FLASH_BASE, offset_em_bytes, dado);
+
+// Para ler dados ou ler o status de Polling
+IORD_16DIRECT(FLASH_BASE, offset_em_bytes);
+2. Configuração do Address Span no Qsys (Platform Designer)
+Se você estiver utilizando um controlador como o Generic Tri-State Controller ou Avalon-MM Tristate para fazer a interface do Avalon com os pinos da Flash, verifique o tamanho da memória mapeada no Qsys.
+
+O que acontece: É muito comum esquecer de alterar o tamanho padrão do componente. Se ele foi configurado para 32 KBytes (que exige apenas 15 bits de endereço), o barramento Avalon não consegue rotear endereços maiores.
+
+O Erro: A sequência de Erase exige um último ciclo onde você escreve o comando 0x30 diretamente no endereço base do setor. Se você tentar enviar esse comando para um setor onde A15=1, o barramento Avalon não encaminha a escrita para a Flash. A Flash fica travada esperando a conclusão do comando.
+
+Como resolver: Abra seu projeto no Qsys, dê um duplo clique no controlador Tristate da Flash e garanta que o campo Address Span (Tamanho) esteja configurado corretamente para 4 MBytes (4194304 bytes).
+
+3. Atenção à Geometria de Setores da S29AL032D
+Você mencionou que consegue endereçar corretamente os primeiros "16KB". É necessário ter muito cuidado ao avançar para os próximos endereços, pois os setores dessa memória não possuem tamanho uniforme.
+
+O datasheet da memória S29AL032D informa que ela possui uma arquitetura de setores flexível. 
+
+Em modelos de Boot Sector (com configurações de top ou bottom boot block disponíveis), a memória apresenta setores de tamanhos diferentes. 
+
+O componente pode contar com oito setores menores de 8 KBytes e sessenta e três setores de 64 KBytes. 
+
+Por exemplo, no modelo de Bottom Boot (Modelo 04), os primeiros oito setores (SA0 a SA7) possuem 8 KBytes cada. 
+
+Após essa região inicial de setores menores, a memória passa a utilizar setores muito maiores de 64 KBytes (32 KWords), a exemplo do setor SA40 e seguintes. 
+
+Se o seu código de controle supõe que a memória cresce indefinidamente em blocos fixos de 16KB ou 8KB e tenta aplicar a operação de Erase somando esses valores fixos, os endereços calculados após a marca de 32KB ou 64KB estarão no meio de um setor maior. O comando CFI de Apagar Setor deve ser enviado (no 6º ciclo de escrita) ao endereço que representa o limite exato de um bloco válido.
+
+Recomendação de próximos passos:
+Substitua seus acessos via ponteiro no C pelas macros IOWR_16DIRECT e tente apagar o setor novamente. Caso não funcione, valide imediatamente o mapa de memória configurado na sua árvore do Qsys.

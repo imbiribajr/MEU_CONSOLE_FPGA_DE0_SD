@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git Cheat Sheet - Projetos FPGA</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0f1115;
+        --panel: #161a22;
+        --panel-2: #1d2330;
+        --text: #e6e9ef;
+        --muted: #9aa4b2;
+        --accent: #4aa3ff;
+        --border: #2a3242;
+        --code: #0c0f15;
+        --ok: #2bd576;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        background: radial-gradient(1200px 600px at 10% -10%, #1b2a45 0%, transparent 60%),
+                    radial-gradient(1000px 700px at 90% -20%, #1a1f38 0%, transparent 55%),
+                    var(--bg);
+        color: var(--text);
+      }
+      header {
+        padding: 32px 20px 12px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        letter-spacing: 0.5px;
+      }
+      p.lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px 20px 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+      }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      }
+      section h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      section .note {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .cmd {
+        background: var(--code);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .cmd code {
+        white-space: pre-wrap;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #dfe6f3;
+      }
+      button.copy {
+        background: var(--panel-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      button.copy:hover {
+        border-color: var(--accent);
+        color: #fff;
+      }
+      button.copy.copied {
+        border-color: var(--ok);
+        color: var(--ok);
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+        font-size: 12px;
+      }
+      .table th, .table td {
+        text-align: left;
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+      }
+      .table th { color: var(--muted); font-weight: 600; }
+      footer {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px 30px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Git Cheat Sheet - Projetos FPGA</h1>
+      <p class="lead">Clique no botao ao lado de cada comando para copiar.</p>
+    </header>
+    <main>
+      <section>
+        <h2>1) Configuracao Inicial (Identidade)</h2>
+        <p class="note">Executar apenas uma vez no computador novo.</p>
+        <div class="cmd">
+          <code>git config --global user.name "Reinaldo Imbiriba"</code>
+          <button class="copy" data-copy="git config --global user.name &quot;Reinaldo Imbiriba&quot;">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git config --global user.email "j.imbiriba@gmail.com"</code>
+          <button class="copy" data-copy="git config --global user.email &quot;j.imbiriba@gmail.com&quot;">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git config --global credential.helper manager</code>
+          <button class="copy" data-copy="git config --global credential.helper manager">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git config --list</code>
+          <button class="copy" data-copy="git config --list">Copiar</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>2) Iniciando o Projeto (Local)</h2>
+        <p class="note">Executar na pasta raiz do projeto (onde esta o .gitignore).</p>
+        <div class="cmd">
+          <code>git init</code>
+          <button class="copy" data-copy="git init">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git add .</code>
+          <button class="copy" data-copy="git add .">Copiar</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>3) Conectando ao GitHub (Primeiro Envio)</h2>
+        <p class="note">Substitua a URL abaixo pelo link do repositorio que voce criou no site.</p>
+        <div class="cmd">
+          <code>git commit -m "Primeiro commit: Projeto FPGA Tetris"</code>
+          <button class="copy" data-copy="git commit -m &quot;Primeiro commit: Projeto FPGA Tetris&quot;">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git branch -M main</code>
+          <button class="copy" data-copy="git branch -M main">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git remote add origin https://github.com//NOME_DO_REPO.git</code>
+          <button class="copy" data-copy="git remote add origin https://github.com//NOME_DO_REPO.git">Copiar</button>
+        </div>
+        <div class="cmd">
+          <code>git push -u origin main</code>
+          <button class="copy" data-copy="git push -u origin main">Copiar</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>4) Fluxo de Trabalho (Dia a Dia)</h2>
+        <p class="note">Sempre que alterar e quiser enviar para o GitHub.</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Passo</th>
+              <th>Comando</th>
+              <th>Descricao</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Preparar</td>
+              <td><code>git add .</code></td>
+              <td>Prepara todos os arquivos modificados.</td>
+            </tr>
+            <tr>
+              <td>Gravar</td>
+              <td><code>git commit -m "Mensagem"</code></td>
+              <td>Salva no historico local.</td>
+            </tr>
+            <tr>
+              <td>Enviar</td>
+              <td><code>git push</code></td>
+              <td>Envia as alteracoes para o GitHub.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Comandos Uteis</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Comando</th>
+              <th>O que faz</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>git status</code></td>
+              <td>Mostra quais arquivos foram mudados.</td>
+            </tr>
+            <tr>
+              <td><code>git log</code></td>
+              <td>Mostra o historico de commits.</td>
+            </tr>
+            <tr>
+              <td><code>git pull</code></td>
+              <td>Baixa atualizacoes da nuvem.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer>
+      Dica: abra este arquivo no navegador para copiar os comandos com um clique.
+    </footer>
+
+    <script>
+      const buttons = document.querySelectorAll('.copy');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const text = btn.getAttribute('data-copy') || '';
+          await navigator.clipboard.writeText(text);
+          btn.classList.add('copied');
+          btn.textContent = 'Copiado';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.textContent = 'Copiar';
+          }, 1200);
+        });
+      });
+    </script>
+  </body>
+</html>

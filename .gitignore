@@ -1,0 +1,49 @@
+# --- Quartus / Hardware Trash ---
+/hardware/db/
+/hardware/incremental_db/
+/hardware/simulation/
+/hardware/greybox_tmp/
+/hardware/output_files/
+/hardware/**/output_files/
+/hardware/output_file.map
+*.sof
+*.pof
+*.qws
+*.ppf
+*.ddb
+*.cmp
+*.sip
+*.spd
+*.bsf
+*.f
+*.hdl
+*.rpt
+*.summary
+*.jdi
+*.pin
+*.done
+*.stackdump
+*.smsg
+
+# --- Nios II / Software Trash ---
+/software/**/obj/
+/software/**/obj/**
+/software/**/*.elf
+/software/**/*.map
+/software/**/*.objdump
+/software/**/*.srec
+/software/**/*.stackdump
+/software/**/launcher_flash.bin
+/software/**/launcher_flash.img
+
+# Ignorar Makefiles gerados (pois temos script para gerar)
+# Mas se quiser manter para facilitar, pode comentar a linha abaixo
+/software/**/Makefile
+
+# --- VS Code ---
+# Mantemos a pasta .vscode (pois tem os botões e tasks), mas ignoramos histórico local
+.history/
+
+# --- Gerais ---
+# *.bak
+*.tmp

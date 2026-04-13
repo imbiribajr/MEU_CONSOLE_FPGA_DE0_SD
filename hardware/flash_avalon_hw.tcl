@@ -1,0 +1,66 @@
+# TCL File for custom flash Avalon wrapper
+package require -exact qsys 13.1
+
+set_module_property DESCRIPTION "DE2 parallel flash controller wrapper"
+set_module_property NAME flash_avalon
+set_module_property VERSION 1.0
+set_module_property INTERNAL false
+set_module_property OPAQUE_ADDRESS_MAP true
+set_module_property DISPLAY_NAME flash_avalon
+set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
+set_module_property EDITABLE true
+set_module_property ANALYZE_HDL AUTO
+set_module_property REPORT_TO_TALKBACK false
+set_module_property ALLOW_GREYBOX_GENERATION false
+
+add_fileset QUARTUS_SYNTH QUARTUS_SYNTH "" ""
+set_fileset_property QUARTUS_SYNTH TOP_LEVEL flash_avalon
+set_fileset_property QUARTUS_SYNTH ENABLE_RELATIVE_INCLUDE_PATHS true
+add_fileset_file flash_command.vh VERILOG_INCLUDE PATH flash_command.vh
+add_fileset_file flash_controller_de2.v VERILOG PATH flash_controller_de2.v
+add_fileset_file flash_avalon.v VERILOG PATH flash_avalon.v TOP_LEVEL_FILE
+
+add_interface clock clock end
+set_interface_property clock clockRate 0
+add_interface_port clock clk clk Input 1
+
+add_interface reset_n reset end
+set_interface_property reset_n associatedClock clock
+set_interface_property reset_n synchronousEdges DEASSERT
+add_interface_port reset_n reset_n reset_n Input 1
+
+add_interface avalon_slave avalon end
+set_interface_property avalon_slave addressUnits WORDS
+set_interface_property avalon_slave associatedClock clock
+set_interface_property avalon_slave associatedReset reset_n
+set_interface_property avalon_slave bitsPerSymbol 8
+set_interface_property avalon_slave burstOnBurstBoundariesOnly false
+set_interface_property avalon_slave burstcountUnits WORDS
+set_interface_property avalon_slave explicitAddressSpan 0
+set_interface_property avalon_slave holdTime 0
+set_interface_property avalon_slave linewrapBursts false
+set_interface_property avalon_slave maximumPendingReadTransactions 0
+set_interface_property avalon_slave readLatency 0
+set_interface_property avalon_slave readWaitTime 1
+set_interface_property avalon_slave setupTime 0
+set_interface_property avalon_slave timingUnits Cycles
+set_interface_property avalon_slave writeWaitTime 0
+add_interface_port avalon_slave avs_address address Input 3
+add_interface_port avalon_slave avs_read read Input 1
+add_interface_port avalon_slave avs_readdata readdata Output 32
+add_interface_port avalon_slave avs_write write Input 1
+add_interface_port avalon_slave avs_writedata writedata Input 32
+set_interface_assignment avalon_slave embeddedsw.configuration.isFlash 0
+set_interface_assignment avalon_slave embeddedsw.configuration.isMemoryDevice 0
+set_interface_assignment avalon_slave embeddedsw.configuration.isNonVolatileStorage 0
+set_interface_assignment avalon_slave embeddedsw.configuration.isPrintableDevice 0
+
+add_interface flash_conduit conduit end
+set_interface_property flash_conduit associatedClock clock
+set_interface_property flash_conduit associatedReset reset_n
+add_interface_port flash_conduit FL_ADDR export Output 22
+add_interface_port flash_conduit FL_DQ export Bidir 8
+add_interface_port flash_conduit FL_WE_N export Output 1
+add_interface_port flash_conduit FL_CE_N export Output 1
+add_interface_port flash_conduit FL_OE_N export Output 1
+add_interface_port flash_conduit FL_RST_N export Output 1
