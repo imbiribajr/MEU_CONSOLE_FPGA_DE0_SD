@@ -7,6 +7,7 @@
 #include "system.h"
 #include "io.h"
 #include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart_regs.h"
 #include "altera_avalon_timer_regs.h"
 #include "sys/alt_irq.h"
 #include "arkanoid_module.h"
@@ -205,12 +206,14 @@ static uint8_t audio_started = 0;
 #define K_LEFT    0x02
 #define K_LAUNCH  0x04
 #define K_AUDIO_TOGGLE 0x08
+#define UART_RX_BUDGET_PER_TICK 16
 
 #define PIO_ENABLE 0
 
 static volatile uint8_t kb_held = 0;
 static volatile uint8_t kb_pressed = 0;
 static volatile uint8_t ps2_held = 0;
+static volatile uint8_t uart_held = 0;
 static volatile uint8_t launcher_exit_req = 0;
 
 #define FLASHBOOT_START_ADDR 0x0180C040u
@@ -433,14 +436,78 @@ static void handle_ps2(void) {
     }
 }
 
+static void handle_uart(void) {
+    uint32_t budget = UART_RX_BUDGET_PER_TICK;
+
+    while (budget-- > 0) {
+        uint32_t status = IORD_ALTERA_AVALON_UART_STATUS(UART_0_BASE);
+
+        if (status & (ALTERA_AVALON_UART_STATUS_ROE_MSK |
+                      ALTERA_AVALON_UART_STATUS_TOE_MSK |
+                      ALTERA_AVALON_UART_STATUS_FE_MSK  |
+                      ALTERA_AVALON_UART_STATUS_PE_MSK  |
+                      ALTERA_AVALON_UART_STATUS_BRK_MSK)) {
+            IOWR_ALTERA_AVALON_UART_STATUS(UART_0_BASE, 0);
+            uart_held = 0;
+            if ((status & ALTERA_AVALON_UART_STATUS_RRDY_MSK) == 0) {
+                continue;
+            }
+        }
+
+        if ((status & ALTERA_AVALON_UART_STATUS_RRDY_MSK) == 0) break;
+
+        switch ((uint8_t)IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE)) {
+            case 'L':
+                uart_held |= K_LEFT;
+                kb_pressed |= K_LEFT;
+                break;
+            case 'l':
+                uart_held &= (uint8_t)~K_LEFT;
+                break;
+            case 'R':
+                uart_held |= K_RIGHT;
+                kb_pressed |= K_RIGHT;
+                break;
+            case 'r':
+                uart_held &= (uint8_t)~K_RIGHT;
+                break;
+            case 'F':
+                uart_held |= K_LAUNCH;
+                kb_pressed |= K_LAUNCH;
+                break;
+            case 'f':
+                uart_held &= (uint8_t)~K_LAUNCH;
+                break;
+            case 'T':
+                kb_pressed |= K_AUDIO_TOGGLE;
+                break;
+            default:
+                break;
+        }
+    }
+
+    {
+        uint32_t status = IORD_ALTERA_AVALON_UART_STATUS(UART_0_BASE);
+        if (status & (ALTERA_AVALON_UART_STATUS_ROE_MSK |
+                      ALTERA_AVALON_UART_STATUS_TOE_MSK |
+                      ALTERA_AVALON_UART_STATUS_FE_MSK  |
+                      ALTERA_AVALON_UART_STATUS_PE_MSK  |
+                      ALTERA_AVALON_UART_STATUS_BRK_MSK)) {
+            IOWR_ALTERA_AVALON_UART_STATUS(UART_0_BASE, 0);
+            uart_held = 0;
+        }
+    }
+}
+
 static void handle_input_merge(void) {
     handle_ps2();
+    handle_uart();
     {
         uint32_t raw = IORD_ALTERA_AVALON_PIO_DATA(PIO_0_BASE) & 0xF;
         uint8_t p = (uint8_t)((~raw) & 0xF);
         if (p & 0x4) launcher_exit_req = 1;
     }
-    kb_held = ps2_held;
+    kb_held = ps2_held | uart_held;
 }
 
 static void launcher_soft_reset(void)
