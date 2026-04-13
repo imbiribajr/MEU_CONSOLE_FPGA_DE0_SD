@@ -29,6 +29,16 @@ When the board powers up:
 - **SDRAM** used for launcher and game execution
 - Tooling to update launcher, bootloader, and games independently
 
+## Photos
+
+Pac-Man running on the LED matrix with the board in the foreground:
+
+![Pac-Man on the LED matrix](./fotos/IMG_20260413_175017.jpg)
+
+Launcher screen showing SD games while using a Bluetooth controller through UART:
+
+![Launcher with Bluetooth controller](./fotos/IMG_20260413_180009.jpg)
+
 ## Hardware
 
 The main hardware lives in [`hardware/`](./hardware) and uses [`hardware/Hardware.vhd`](./hardware/Hardware.vhd) as the top-level file.

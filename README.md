@@ -29,6 +29,16 @@ Ao energizar a placa:
 - Uso de **SDRAM** para execucao do launcher e dos jogos
 - Infraestrutura para atualizar launcher, boot e jogos separadamente
 
+## Fotos
+
+Pac-Man rodando na matriz LED com a placa em primeiro plano:
+
+![Pac-Man na matriz LED](./fotos/IMG_20260413_175017.jpg)
+
+Launcher em execucao com selecao de jogos no SD e controle Bluetooth via UART:
+
+![Launcher com controle Bluetooth](./fotos/IMG_20260413_180009.jpg)
+
 ## Hardware
 
 O hardware principal esta em [`hardware/`](./hardware) e usa como topo o arquivo [`hardware/Hardware.vhd`](./hardware/Hardware.vhd).
