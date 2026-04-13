@@ -1,10 +1,10 @@
 /*
  * system.h - SOPC Builder system and BSP software package information
  *
- * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'niosII_ps2'
+ * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'NiosII_ps2'
  * SOPC Builder design path: F:/Jogos_FPGA/MEU_CONSOLE_FPGA_DE0_SD/hardware/niosII_ps2.sopcinfo
  *
- * Generated: Mon Apr 13 13:48:45 BRT 2026
+ * Generated: Mon Apr 13 18:09:35 BRT 2026
  */
 
 /*
@@ -173,7 +173,7 @@
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
 #define ALT_STDOUT_TYPE "altera_avalon_jtag_uart"
-#define ALT_SYSTEM_NAME "niosII_ps2"
+#define ALT_SYSTEM_NAME "NiosII_ps2"
 
 
 /*
@@ -342,7 +342,7 @@
 #define ONCHIP_MEMORY2_0_CONTENTS_INFO ""
 #define ONCHIP_MEMORY2_0_DUAL_PORT 0
 #define ONCHIP_MEMORY2_0_GUI_RAM_BLOCK_TYPE "AUTO"
-#define ONCHIP_MEMORY2_0_INIT_CONTENTS_FILE "niosII_ps2_onchip_memory2_0"
+#define ONCHIP_MEMORY2_0_INIT_CONTENTS_FILE "NiosII_ps2_onchip_memory2_0"
 #define ONCHIP_MEMORY2_0_INIT_MEM_CONTENT 1
 #define ONCHIP_MEMORY2_0_INSTANCE_ID "NONE"
 #define ONCHIP_MEMORY2_0_IRQ -1
@@ -443,7 +443,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1776053153
+#define SYSID_QSYS_0_TIMESTAMP 1776110056
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 

@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>13/04/2026 13:48:45</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1776098925392</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>13/04/2026 18:09:34</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1776114574019</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\software\bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>F:\Jogos_FPGA\MEU_CONSOLE_FPGA_DE0_SD\hardware\niosII_ps2.sopcinfo</SopcDesignFile>

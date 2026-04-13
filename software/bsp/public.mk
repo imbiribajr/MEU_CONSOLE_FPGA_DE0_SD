@@ -138,8 +138,8 @@ QSYS := 1
 ELF_PATCH_FLAG += --qsys true
 
 # Design Name 
-# setting SOPC_NAME is niosII_ps2
-SOPC_NAME := niosII_ps2
+# setting SOPC_NAME is NiosII_ps2
+SOPC_NAME := NiosII_ps2
 
 # SopcBuilder Simulation Enabled 
 # setting SOPC_SIMULATION_ENABLED is false
@@ -156,9 +156,9 @@ SOPC_SYSID_FLAG += --sidp=0x18110b0
 ELF_PATCH_FLAG  += --sidp 0x18110b0
 
 # The SOPC Timestamp 
-# setting SOPC_TIMESTAMP is 1776053153
-SOPC_SYSID_FLAG += --timestamp=1776053153
-ELF_PATCH_FLAG  += --timestamp 1776053153
+# setting SOPC_TIMESTAMP is 1776110056
+SOPC_SYSID_FLAG += --timestamp=1776110056
+ELF_PATCH_FLAG  += --timestamp 1776110056
 
 # Enable JTAG UART driver to recover when host is inactive causing buffer to 
 # full without returning error. Printf will not fail with this recovery. none 

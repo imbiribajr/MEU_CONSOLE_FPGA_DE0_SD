@@ -73,41 +73,11 @@
             },
             {
                 "cwd": "${workspaceFolder}/software/scripts",
-                "name": "$(terminal) Reabrir Terminal Nios2",
+                "name": "$(terminal) Reabrir Terminal Nios2 (10)",
                 "color": "#3498db",
                 "singleInstance": true,
                 "command": ".\\reabrir_terminal_nios2.bat"
-            },
-            {
-                "cwd": "${workspaceFolder}/led-sim-platform",
-                "name": "$(triangle-right) Rodar Simulacao",
-                "color": "#2ecc71",
-                "singleInstance": true,
-                "command": "npm run dev"
-            },
-            {
-                "cwd": "${workspaceFolder}",
-                "name": "$(repo-sync) Sincronizar Real -> Sim",
-                "color": "#1abc9c",
-                "singleInstance": true,
-                "command": "powershell -ExecutionPolicy Bypass -File .\\led-sim-platform\\sync_real_to_sim.ps1"
-            },
-            {
-                "cwd": "${workspaceFolder}",
-                "name": "$(repo-sync) Sincronizar Sim -> Real",
-                "color": "#16a085",
-                "singleInstance": true,
-                "command": "powershell -ExecutionPolicy Bypass -Command \"Copy-Item -Path .\\led-sim-platform\\c\\main.c -Destination .\\software\\app\\main.c\""
-            },
-            {
-                "cwd": "${workspaceFolder}/software/scripts",
-                "name": "$(gear) Compilar Nios (main.elf) - escolher .c",
-                "color": "#4d90fe",
-                "singleInstance": true,
-                "command": ".\\compilar_nios.bat"
-            }
-            
-                         
+            },               
         ]
     },
 

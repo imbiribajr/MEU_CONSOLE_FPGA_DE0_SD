@@ -200,7 +200,7 @@ $(MEM_1)_CREATE_LANES := 0
 new_sdram_controller_0: check_elf_exists $(HDL_SIM_DIR)/$(MEM_1).dat $(HDL_SIM_DIR)/$(MEM_1).sym
 
 # Memory: onchip_memory2_0
-MEM_2 := niosII_ps2_onchip_memory2_0
+MEM_2 := NiosII_ps2_onchip_memory2_0
 $(MEM_2)_NAME := onchip_memory2_0
 $(MEM_2)_MEM_INIT_FILE_PARAM_NAME := INIT_FILE
 HEX_FILES += $(MEM_INIT_DIR)/$(MEM_2).hex
