@@ -148,6 +148,11 @@ Game code currently combines:
 
 This allows a PS/2 keyboard or a Bluetooth controller that outputs serial commands to the system UART.
 
+At any time, the system accepts the following commands:
+
+- SW0 on the DE0 resets the game
+- BUTTON2 on the DE0 reloads the launcher, allowing the user to return to the launcher and load a new game
+
 ## Build
 
 ### Requirements
