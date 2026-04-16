@@ -1,32 +1,32 @@
 # MEU_CONSOLE_FPGA_DE0_SD
 
-Console de games em FPGA baseado em **Nios II**, com **launcher residente em flash NOR**, jogos carregados a partir de **cartao SD**, entrada por **teclado PS/2** e suporte a controle via **UART/Bluetooth**.
+Console de games em FPGA baseado em **Nios II**, com **launcher residente em flash NOR**, jogos carregados a partir de **cartão SD**, entrada por **teclado PS/2** e suporte a controle via **UART/Bluetooth**.
 
 English version: [README.en.md](./README.en.md)
 
-O projeto foi desenvolvido para a familia **Intel/Altera Cyclone III** usando **Quartus II 13.0 SP1** e **Nios II EDS 13.0 SP1**. O hardware integra CPU Nios II, SDRAM, interface PS/2, UART, SPI para SD card, controlador de flash paralela e saida para matriz de LED.
+O projeto foi desenvolvido para a familia **Intel/Altera Cyclone III** usando **Quartus II 13.0 SP1** e **Nios II EDS 13.0 SP1**. O hardware integra CPU Nios II, SDRAM, interface PS/2, UART, SPI para SD card, controlador de flash paralela e saída para matriz de LED.
 
 ## Visao Geral
 
 Ao energizar a placa:
 
 1. a FPGA carrega o hardware
-2. o Nios II inicia um bootloader minimo em memoria on-chip
-3. esse bootloader le o `launcher` gravado na flash NOR
+2. o Nios II inicia um bootloader mínimo em memória on-chip
+3. esse bootloader lê o `launcher` gravado na flash NOR
 4. o `launcher` sobe em SDRAM
-5. o `launcher` monta FAT32 no cartao SD
-6. os jogos `.gmod` sao listados no menu
-7. o jogo selecionado e carregado para SDRAM e executado
+5. o `launcher` monta FAT32 no cartão SD
+6. os jogos `.gmod` são listados no menu
+7. o jogo selecionado é carregado para SDRAM e executado
 
 ## Principais Recursos
 
 - Boot autonomo do sistema sem depender de `nios2-download`
 - `launcher` persistido em flash paralela
 - Jogos armazenados no SD em formato `.gmod`
-- Navegacao por teclado **PS/2**
-- Controle alternativo via **UART** para modulo Bluetooth/controller serial
-- Renderizacao em **matriz LED HUB75**
-- Uso de **SDRAM** para execucao do launcher e dos jogos
+- Navegacão por teclado **PS/2**
+- Controle alternativo via **UART** para módulo Bluetooth/controller serial
+- Renderizaçãoo em **matriz LED HUB75**
+- Uso de **SDRAM** para execução do launcher e dos jogos
 - Infraestrutura para atualizar launcher, boot e jogos separadamente
 
 ## Fotos
@@ -35,7 +35,7 @@ Pac-Man rodando na matriz LED com a placa em primeiro plano:
 
 ![Pac-Man na matriz LED](./fotos/IMG_20260413_175017.jpg)
 
-Launcher em execucao com selecao de jogos no SD e controle Bluetooth via UART:
+Launcher em execução com seleção de jogos no SD e controle Bluetooth via UART:
 
 ![Launcher com controle Bluetooth](./fotos/IMG_20260413_180009.jpg)
 
@@ -47,10 +47,10 @@ Blocos relevantes presentes no projeto:
 
 - **Nios II Qsys** gerado em `hardware/NiosII_ps2/`
 - **PS/2** via `ps2_avalon_interface.vhd`
-- **UART** para recepcao de comandos seriais/Bluetooth
+- **UART** para recepção de comandos seriais/Bluetooth
 - **SPI SD card** para leitura dos jogos no SD
 - **Flash NOR paralela** para armazenamento do launcher
-- **SDRAM** como memoria principal de execucao
+- **SDRAM** como memória principal de execução
 - **Matriz LED** controlada por `led_matrix_avalon.vhd`
 
 Projeto Quartus:
@@ -60,12 +60,12 @@ Projeto Quartus:
 
 ## Arquitetura De Software
 
-O software esta organizado em tres camadas principais:
+O software está organizado em três camadas principais:
 
 - **flashboot**
-  Bootloader minimo executado a partir da memoria on-chip. Carrega o launcher da NOR para SDRAM.
+  Bootloader mínimo executado a partir da memória on-chip. Carrega o launcher da NOR para SDRAM.
 - **flashwrite**
-  Aplicativo utilitario que grava ou atualiza a imagem do launcher na flash paralela.
+  Aplicativo utilitário que grava ou atualiza a imagem do launcher na flash paralela.
 - **launcher**
   Menu principal que monta FAT32 no SD, lista os jogos e carrega arquivos `.gmod`.
 
@@ -73,25 +73,25 @@ Pastas principais:
 
 - [`software/bsp/`](./software/bsp): BSP gerado pelo Nios II EDS
 - [`software/games/flashboot/`](./software/games/flashboot): bootloader
-- [`software/games/flashwrite/`](./software/games/flashwrite): gravacao da imagem do launcher na NOR
-- [`software/games/launcher/`](./software/games/launcher): launcher e modulos de jogo
-- [`software/scripts/`](./software/scripts): scripts auxiliares de build e programacao
-- [`software/workspace/`](./software/workspace): area de app Nios usada no fluxo de desenvolvimento
+- [`software/games/flashwrite/`](./software/games/flashwrite): gravaçãoo da imagem do launcher na NOR
+- [`software/games/launcher/`](./software/games/launcher): launcher e módulos de jogo
+- [`software/scripts/`](./software/scripts): scripts auxiliares de build e programação
+- [`software/workspace/`](./software/workspace): área de app Nios usada no fluxo de desenvolvimento
 
 ## Fluxo De Boot
 
 Fluxo validado no projeto:
 
-1. o Nios II sai do reset na memoria on-chip
-2. o `flashboot` e executado
-3. a flash NOR e estabilizada e colocada em `read array`
-4. o header `LNCH` do launcher e validado
-5. o payload do launcher e copiado para SDRAM
-6. `gp`, `sp` e `entry` sao ajustados
-7. a execucao e transferida ao launcher
+1. o Nios II sai do reset na memória on-chip
+2. o `flashboot` é executado
+3. a flash NOR é estabilizada e colocada em `read array`
+4. o header `LNCH` do launcher é validado
+5. o payload do launcher é copiado para SDRAM
+6. `gp`, `sp` e `entry` são ajustados
+7. a execução é transferida ao launcher
 8. o launcher monta o SD FAT32 e lista os jogos
 
-Documentacao de apoio:
+Documentação de apoio:
 
 - [`software/games/flashboot/BOOT_FLOW.md`](./software/games/flashboot/BOOT_FLOW.md)
 - [`software/games/flashboot/README.md`](./software/games/flashboot/README.md)
@@ -99,15 +99,15 @@ Documentacao de apoio:
 
 ## Formato Dos Jogos
 
-Os jogos atuais no SD usam arquivos binarios `.gmod`.
+Os jogos atuais no SD usam arquivos binários `.gmod`.
 
-Caracteristicas do formato atual:
+Características do formato atual:
 
-- multiplos segmentos carregaveis
-- `entry_addr`, `stack_addr` e `gp_addr` no cabecalho
+- múltiplos segmentos carregáveis
+- `entry_addr`, `stack_addr` e `gp_addr` no cabeçalho
 - carga direta em SDRAM pelo launcher
 
-Definicoes:
+Definições:
 
 - [`software/games/launcher/app/launcher_image.h`](./software/games/launcher/app/launcher_image.h)
 - gerador: [`software/scripts/gerar_gmod.ps1`](./software/scripts/gerar_gmod.ps1)
@@ -123,7 +123,7 @@ Jogos atualmente presentes no repositório:
 - Space Invaders
 - Tetris
 
-Os binarios prontos de exemplo estao em:
+Os binários prontos de exemplo estao em:
 
 - [`software/games/launcher/app/gmods/`](./software/games/launcher/app/gmods)
 
@@ -133,7 +133,7 @@ O launcher aceita entrada por:
 
 - **PS/2**
 - **UART**
-- botoes locais mapeados no PIO
+- botões locais mapeados no PIO
 
 No launcher, o mapeamento principal e:
 
@@ -144,8 +144,10 @@ Nos jogos, o codigo mostra leitura combinada de:
 
 - scan codes de **PS/2**
 - bytes recebidos pela **UART**
+- sw0 na DE0 reset o game
+- button2 na DE0 recarrega o launcher
 
-Isso permite usar teclado PS/2 ou um controle Bluetooth que entregue comandos seriais ao UART do sistema.
+Isso permite usar teclado PS/2 ou um controle Bluetooth que entrega comandos seriais à UART do sistema.
 
 ## Como Compilar
 
@@ -161,7 +163,7 @@ Caminhos usados nos scripts atuais:
 - `F:\altera\13.0sp1\quartus`
 - `F:\altera\13.0sp1\nios2eds`
 
-Se sua instalacao estiver em outro local, ajuste os `.bat` e `.ps1` em [`software/scripts/`](./software/scripts) e nas configuracoes do VS Code em [`.vscode/settings.json`](./.vscode/settings.json).
+Se sua instalacao estiver em outro local, ajuste os `.bat` e `.ps1` em [`software/scripts/`](./software/scripts) e nas configurações do VS Code em [`.vscode/settings.json`](./.vscode/settings.json).
 
 ### Hardware
 
@@ -230,7 +232,7 @@ Depois de gerar a imagem:
 2. execute o `flashwrite` na placa
 3. ele apaga, grava e verifica a imagem na flash
 
-Documentacao:
+Documentação:
 
 - [`software/games/flashwrite/README.md`](./software/games/flashwrite/README.md)
 
@@ -248,11 +250,11 @@ Fluxo detalhado:
 
 ## Como Gerar Um Novo Jogo `.gmod`
 
-Cada jogo externo possui um modulo proprio em:
+Cada jogo externo possui um módulo próprio em:
 
 - `software/games/launcher/app/<nome>_module/`
 
-Normalmente cada modulo contem:
+Normalmente cada módulo contém:
 
 - `main.c`
 - `external_main.c`
@@ -269,11 +271,11 @@ O `.gmod` resultante e salvo em:
 
 - [`software/games/launcher/app/gmods/`](./software/games/launcher/app/gmods)
 
-Documentacao:
+Documentação:
 
 - [`software/games/launcher/EXTERNAL_BUILD.md`](./software/games/launcher/EXTERNAL_BUILD.md)
 
-## Estrutura Do Repositorio
+## Estrutura Do Repositório
 
 ```text
 MEU_CONSOLE_FPGA_DE0_SD/
@@ -291,9 +293,9 @@ MEU_CONSOLE_FPGA_DE0_SD/
 
 ## VS Code
 
-O repositório inclui configuracao para trabalhar com VS Code:
+O repositório inclui configuração para trabalhar com VS Code:
 
-- botoes de acao em [`.vscode/settings.json`](./.vscode/settings.json)
+- botões de açao em [`.vscode/settings.json`](./.vscode/settings.json)
 - tasks em [`.vscode/tasks.json`](./.vscode/tasks.json)
 - debug em [`.vscode/launch.json`](./.vscode/launch.json)
 
@@ -303,19 +305,19 @@ O fluxo foi preparado para chamar o ambiente da Intel/Altera via `Nios_Shell.bat
 
 Pelo estado atual do repositório:
 
-- o hardware Quartus esta presente e compilavel
+- o hardware Quartus esta presente e compilável
 - o `flashboot` esta integrado ao fluxo de boot
 - o `launcher` carrega imagens `.gmod` do SD
-- a leitura de FAT32 esta implementada no proprio launcher
-- os jogos ja possuem modulos e artefatos `.gmod`
-- o controle por PS/2 e UART esta presente no launcher e nos jogos
+- a leitura de FAT32 está implementada no próprio launcher
+- os jogos já possuem módulos e artefatos `.gmod`
+- o controle por PS/2 e UART está presente no launcher e nos jogos
 
-## Observacoes
+## Observações
 
 - O projeto inclui arquivos gerados do Qsys/synthesis que fazem parte do fluxo atual.
-- Artefatos pesados de compilacao do Quartus e objetos temporarios do Nios estao filtrados pelo [`.gitignore`](./.gitignore).
-- Alguns documentos internos ainda refletem fases anteriores do desenvolvimento; este README descreve o fluxo validado a partir do estado atual do codigo.
+- Artefatos pesados de compilação do Quartus e objetos temporários do Nios estão filtrados pelo [`.gitignore`](./.gitignore).
+- Alguns documentos internos ainda refletem fases anteriores do desenvolvimento; este README descreve o fluxo validado a partir do estado atual do código.
 
-## Licenca
+## Licença
 
-Este projeto usa a licenca [MIT](./LICENSE).
+Este projeto usa a licença [MIT](./LICENSE).
