@@ -4,7 +4,7 @@ Console de games em FPGA baseado em **Nios II**, com **launcher residente em fla
 
 English version: [README.en.md](./README.en.md)
 
-O projeto foi desenvolvido para a familia **Intel/Altera Cyclone III** usando **Quartus II 13.0 SP1** e **Nios II EDS 13.0 SP1**. O hardware integra CPU Nios II, SDRAM, interface PS/2, UART, SPI para SD card, controlador de flash paralela e saída para matriz de LED.
+O projeto foi desenvolvido para a família **Intel/Altera Cyclone III** usando **Quartus II 13.0 SP1** e **Nios II EDS 13.0 SP1**. O hardware integra CPU Nios II, SDRAM, interface PS/2, UART, SPI para SD card, controlador de flash paralela e saída para matriz de LED.
 
 ## Visao Geral
 
@@ -20,12 +20,12 @@ Ao energizar a placa:
 
 ## Principais Recursos
 
-- Boot autonomo do sistema sem depender de `nios2-download`
+- Boot autônomo do sistema sem depender de `nios2-download`
 - `launcher` persistido em flash paralela
 - Jogos armazenados no SD em formato `.gmod`
 - Navegacão por teclado **PS/2**
 - Controle alternativo via **UART** para módulo Bluetooth/controller serial
-- Renderizaçãoo em **matriz LED HUB75**
+- Renderização em **matriz LED HUB75**
 - Uso de **SDRAM** para execução do launcher e dos jogos
 - Infraestrutura para atualizar launcher, boot e jogos separadamente
 
@@ -41,7 +41,7 @@ Launcher em execução com seleção de jogos no SD e controle Bluetooth via UAR
 
 ## Hardware
 
-O hardware principal esta em [`hardware/`](./hardware) e usa como topo o arquivo [`hardware/Hardware.vhd`](./hardware/Hardware.vhd).
+O hardware principal está em [`hardware/`](./hardware) e usa como topo o arquivo [`hardware/Hardware.vhd`](./hardware/Hardware.vhd).
 
 Blocos relevantes presentes no projeto:
 
@@ -73,7 +73,7 @@ Pastas principais:
 
 - [`software/bsp/`](./software/bsp): BSP gerado pelo Nios II EDS
 - [`software/games/flashboot/`](./software/games/flashboot): bootloader
-- [`software/games/flashwrite/`](./software/games/flashwrite): gravaçãoo da imagem do launcher na NOR
+- [`software/games/flashwrite/`](./software/games/flashwrite): gravação da imagem do launcher na NOR
 - [`software/games/launcher/`](./software/games/launcher): launcher e módulos de jogo
 - [`software/scripts/`](./software/scripts): scripts auxiliares de build e programação
 - [`software/workspace/`](./software/workspace): área de app Nios usada no fluxo de desenvolvimento
@@ -123,7 +123,7 @@ Jogos atualmente presentes no repositório:
 - Space Invaders
 - Tetris
 
-Os binários prontos de exemplo estao em:
+Os binários prontos de exemplo estão em:
 
 - [`software/games/launcher/app/gmods/`](./software/games/launcher/app/gmods)
 
@@ -135,19 +135,22 @@ O launcher aceita entrada por:
 - **UART**
 - botões locais mapeados no PIO
 
-No launcher, o mapeamento principal e:
+No launcher, o mapeamento principal é:
 
 - `Up/Down`: navegar no menu
 - `L`, `Enter`, `Space` ou equivalente serial: selecionar/carregar
 
-Nos jogos, o codigo mostra leitura combinada de:
+Nos jogos, o código mostra leitura combinada de:
 
 - scan codes de **PS/2**
 - bytes recebidos pela **UART**
-- sw0 na DE0 reset o game
-- button2 na DE0 recarrega o launcher
 
 Isso permite usar teclado PS/2 ou um controle Bluetooth que entrega comandos seriais à UART do sistema.
+
+A qualquer momento o sistema aceita os seguintes comandos:
+
+- sw0 na DE0 reset o game
+- button2 na DE0 recarrega o launcher. Permite o usuário chamar o launcher para carregar novo game
 
 ## Como Compilar
 
@@ -163,7 +166,7 @@ Caminhos usados nos scripts atuais:
 - `F:\altera\13.0sp1\quartus`
 - `F:\altera\13.0sp1\nios2eds`
 
-Se sua instalacao estiver em outro local, ajuste os `.bat` e `.ps1` em [`software/scripts/`](./software/scripts) e nas configurações do VS Code em [`.vscode/settings.json`](./.vscode/settings.json).
+Se sua instalação estiver em outro local, ajuste os `.bat` e `.ps1` em [`software/scripts/`](./software/scripts) e nas configurações do VS Code em [`.vscode/settings.json`](./.vscode/settings.json).
 
 ### Hardware
 
@@ -213,7 +216,7 @@ cd software\games\launcher\app
 .\compila_grava.bat
 ```
 
-### Gerar A Imagem Do Launcher Para Flash
+### Geração da Imagem Do Launcher Para Flash
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File software\scripts\gerar_launcher_flash_image.ps1
@@ -284,11 +287,11 @@ MEU_CONSOLE_FPGA_DE0_SD/
 |  |- bsp/                        -> BSP do Nios II
 |  |- games/
 |  |  |- flashboot/               -> bootloader em on-chip
-|  |  |- flashwrite/              -> gravacao da imagem do launcher na NOR
+|  |  |- flashwrite/              -> gravação da imagem do launcher na NOR
 |  |  |- launcher/                -> launcher e jogos
-|  |- scripts/                    -> automacao de build, flash e geracao de imagens
+|  |- scripts/                    -> automação de build, flash e geração de imagens
 |  |- workspace/                  -> app/workspace de desenvolvimento
-|- .vscode/                       -> tasks e botoes de acao do VS Code
+|- .vscode/                       -> tasks e botões de ação do VS Code
 ```
 
 ## VS Code
@@ -305,8 +308,8 @@ O fluxo foi preparado para chamar o ambiente da Intel/Altera via `Nios_Shell.bat
 
 Pelo estado atual do repositório:
 
-- o hardware Quartus esta presente e compilável
-- o `flashboot` esta integrado ao fluxo de boot
+- o hardware Quartus está presente e compilável
+- o `flashboot` está integrado ao fluxo de boot
 - o `launcher` carrega imagens `.gmod` do SD
 - a leitura de FAT32 está implementada no próprio launcher
 - os jogos já possuem módulos e artefatos `.gmod`
