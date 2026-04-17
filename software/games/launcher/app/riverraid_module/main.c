@@ -13,6 +13,13 @@
 #include "sprites.h"
 #include "riverraid_module.h"
 
+#define effects_trigger_explosion() ((void)0)
+#define effects_trigger_game_over() ((void)0)
+#define effects_trigger_fuel()      ((void)0)
+#define effects_trigger_shot()      ((void)0)
+#define effects_engine_start()      ((void)0)
+#define effects_engine_stop()       ((void)0)
+
 /* main.c version: 1.0.7 */
 
 /* =========================
@@ -33,31 +40,6 @@
 #define MS_TICK_US      1000 // tick base (us)
 #define LOGIC_DT_MS     3    // passo fixo da logica (ms)
 #define RENDER_DT_MS    6    // intervalo de render (ms)
-
-/* =========================
- * Audio
- * ========================= */
-#define AUDIO_ENABLED   0
-#define AUDIO_USE_TIMER 0
-#if AUDIO_ENABLED
-#include "terasic_lib/AUDIO.h"
-#include "terasic_lib/I2C.h"
-#include "audio/effects.h"
-#define AUDIO_SAMPLES_PER_TICK (EFFECTS_SAMPLE_RATE / 1000u)
-#endif
-
-#if !AUDIO_ENABLED
-#define effects_trigger_shot()       ((void)0)
-#define effects_trigger_fuel()       ((void)0)
-#define effects_trigger_explosion()  ((void)0)
-#define effects_trigger_game_over()  ((void)0)
-#define effects_music_start()        ((void)0)
-#define effects_music_stop()         ((void)0)
-#define effects_engine_start()       ((void)0)
-#define effects_engine_stop()        ((void)0)
-#define effects_init()               ((void)0)
-#define effects_next_sample()        ((int16_t)0)
-#endif
 
 /* =========================
  * Colors
@@ -252,6 +234,7 @@ typedef struct {
 static void update_explosions(void);
 static void draw_explosion_clipped(int x0, int y0);
 static void draw_explosion2_clipped(int x0, int y0);
+static void start_explosion(obj_t *o);
 
 static int river_left[VIEW_H];
 static int river_right[VIEW_H];
@@ -341,17 +324,6 @@ static uint32_t fade_acc_ms = 0;
 
 #define FADE_STEP_MS    5
 #define FADE_STEP_VAL   1
-
-/* =========================
- * Audio state
- * ========================= */
-#if AUDIO_ENABLED
-static uint8_t audio_timer_ok = 0;
-static volatile uint32_t audio_pending_ticks = 0;
-
-#define AUDIO_PENDING_MAX        8u
-#define AUDIO_PROCESS_BUDGET     2u
-#endif
 
 /* =========================
  * Input
@@ -497,93 +469,12 @@ static void set_display_brightness(uint8_t level)
     IOWR_8DIRECT(LED_MATRIX_AVALON_0_BASE, LED_BRIGHTNESS_OFFSET, corrected_pwm);
 }
 
-/* =========================
- * Audio helpers
- * ========================= */
-static void audio_init(void)
-{
-#if AUDIO_ENABLED
-    if (AUDIO_Init()) {
-        AUDIO_SetSampleRate(RATE_ADC48K_DAC48K);
-        AUDIO_DacEnableSoftMute(false);
-        AUDIO_EnableByPass(false);
-        AUDIO_EnableSiteTone(false);
-        AUDIO_MicMute(true);
-        AUDIO_LineInMute(true);
-        AUDIO_SetLineOutVol(0xFF, 0xFF);
-    }
-    AUDIO_FifoClear();
-    effects_init();
-#endif
-}
-
-static void audio_tick(void)
-{
-#if AUDIO_ENABLED
-    for (uint32_t i = 0; i < AUDIO_SAMPLES_PER_TICK; i++) {
-        if (!AUDIO_DacFifoNotFull()) {
-            break;
-        }
-        int16_t s = effects_next_sample();
-        AUDIO_DacFifoSetData(s, s);
-    }
-#endif
-}
-
-#if AUDIO_ENABLED && AUDIO_USE_TIMER
- #include "altera_avalon_timer_regs.h"
-
-static void timer0_isr(void *context)
-{
-    (void)context;
-    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_0_BASE, 0);
-    if (audio_pending_ticks < AUDIO_PENDING_MAX) {
-        audio_pending_ticks++;
-    }
-}
-
-static void timer0_start(void)
-{
-    uint32_t period = TIMER_0_FREQ / 1000u;
-    if (period > 0) period -= 1u;
-    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE, 0);
-    IOWR_ALTERA_AVALON_TIMER_PERIODL(TIMER_0_BASE, (uint16_t)(period & 0xFFFFu));
-    IOWR_ALTERA_AVALON_TIMER_PERIODH(TIMER_0_BASE, (uint16_t)(period >> 16));
-    if (alt_ic_isr_register(TIMER_0_IRQ_INTERRUPT_CONTROLLER_ID, TIMER_0_IRQ,
-            timer0_isr, NULL, NULL) == 0) {
-        audio_timer_ok = 1;
-        IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE,
-            ALTERA_AVALON_TIMER_CONTROL_ITO_MSK |
-            ALTERA_AVALON_TIMER_CONTROL_CONT_MSK |
-            ALTERA_AVALON_TIMER_CONTROL_START_MSK);
-    } else {
-        audio_timer_ok = 0;
-    }
-}
 
 static void enable_interrupts(void)
 {
     alt_irq_context ctx = alt_irq_disable_all();
     alt_irq_enable_all(ctx | 1u);
 }
-
-static void audio_process_pending(void)
-{
-    uint32_t pending = 0;
-    alt_irq_context ctx = alt_irq_disable_all();
-    pending = audio_pending_ticks;
-    audio_pending_ticks = 0;
-    alt_irq_enable_all(ctx);
-
-    if (pending > AUDIO_PROCESS_BUDGET) {
-        pending = AUDIO_PROCESS_BUDGET;
-    }
-
-    while (pending-- > 0) {
-        audio_tick();
-    }
-}
-#endif
 
 /* =========================
  * Input handling
@@ -2431,14 +2322,6 @@ static void riverraid_run(void)
     uint32_t last_render = ms_global;
     uint32_t acc_logic   = 0;
 
-#if AUDIO_ENABLED
-    audio_init();
-    if (AUDIO_USE_TIMER) {
-        timer0_start();
-        enable_interrupts();
-    }
-#endif
-
     set_display_brightness(DEFAULT_BRIGHTNESS);
 
     init_panel_lut_small();
@@ -2455,14 +2338,6 @@ static void riverraid_run(void)
         if (launcher_exit_req) {
             launcher_soft_reset();
         }
-
-#if AUDIO_ENABLED
-        if (audio_timer_ok) {
-            audio_process_pending();
-        } else {
-            audio_tick();
-        }
-#endif
 
         const uint32_t MAX_DT_MS = 40;
         const uint32_t MAX_STEPS = 8;

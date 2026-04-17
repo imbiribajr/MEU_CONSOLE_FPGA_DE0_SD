@@ -1,5 +1,9 @@
+#ifndef ALT_NO_C_PLUS_PLUS
 #define ALT_NO_C_PLUS_PLUS
+#endif
+#ifndef ALT_NO_EXIT
 #define ALT_NO_EXIT
+#endif
 
 #include <stdint.h>
 #include <stdio.h>
@@ -9,6 +13,7 @@
 #include "sys/alt_cache.h"
 #include "altera_avalon_jtag_uart_regs.h"
 #include "flashboot_image.h"
+#include "unifor_splash.h"
 
 #ifndef GENERIC_TRISTATE_CONTROLLER_0_BASE
 #error "Regenerate the BSP so system.h defines GENERIC_TRISTATE_CONTROLLER_0_BASE."
@@ -23,10 +28,9 @@
 #define VIEW_W 64
 #define VIEW_H 128
 #define COLOR_BLACK 0
+#define COLOR_RED 1
 #define COLOR_GREEN 2
 #define LED_BRIGHTNESS_OFFSET 8192
-
-static uint16_t g_base_addr_xv[VIEW_W];
 
 typedef void (*flashboot_entry_fn)(void);
 
@@ -67,34 +71,40 @@ static void set_display_brightness(uint8_t level)
     IOWR_8DIRECT(LED_MATRIX_AVALON_0_BASE, LED_BRIGHTNESS_OFFSET, level);
 }
 
-static void init_panel_lut_small(void)
-{
-    int xv;
-    for (xv = 0; xv < VIEW_W; xv++) {
-        int yp = 63 - xv;
-        uint32_t base = (yp < 32) ? (uint32_t)(yp * 128) : (4096u + (uint32_t)((yp - 32) * 128));
-        g_base_addr_xv[xv] = (uint16_t)base;
-    }
-}
-
 static void panel_put(int xv, int yv, uint8_t rgb)
 {
     uint16_t xp;
+    uint32_t base;
+
     if ((unsigned)xv >= VIEW_W || (unsigned)yv >= VIEW_H) return;
+
     xp = (uint16_t)yv;
-    IOWR_8DIRECT(LED_MATRIX_AVALON_0_BASE, (uint16_t)(g_base_addr_xv[xv] + xp), rgb);
+    if (xv < 32) {
+        base = (uint32_t)((63 - xv) * 128);
+    } else {
+        base = 4096u + (uint32_t)(((63 - xv) - 32) * 128);
+    }
+
+    IOWR_8DIRECT(LED_MATRIX_AVALON_0_BASE, (uint16_t)(base + xp), rgb);
 }
 
 static uint8_t glyph_row(char c, int row)
 {
     switch (c) {
         case 'A': { static const uint8_t g[7] = {0x0E,0x11,0x11,0x1F,0x11,0x11,0x11}; return g[row]; }
+        case 'C': { static const uint8_t g[7] = {0x0E,0x11,0x10,0x10,0x10,0x11,0x0E}; return g[row]; }
         case 'D': { static const uint8_t g[7] = {0x1E,0x11,0x11,0x11,0x11,0x11,0x1E}; return g[row]; }
         case 'G': { static const uint8_t g[7] = {0x0F,0x10,0x10,0x17,0x11,0x11,0x0E}; return g[row]; }
         case 'I': { static const uint8_t g[7] = {0x1F,0x04,0x04,0x04,0x04,0x04,0x1F}; return g[row]; }
         case 'L': { static const uint8_t g[7] = {0x10,0x10,0x10,0x10,0x10,0x10,0x1F}; return g[row]; }
         case 'N': { static const uint8_t g[7] = {0x11,0x19,0x15,0x13,0x11,0x11,0x11}; return g[row]; }
         case 'O': { static const uint8_t g[7] = {0x0E,0x11,0x11,0x11,0x11,0x11,0x0E}; return g[row]; }
+        case 'P': { static const uint8_t g[7] = {0x1E,0x11,0x11,0x1E,0x10,0x10,0x10}; return g[row]; }
+        case 'F': { static const uint8_t g[7] = {0x1F,0x10,0x10,0x1E,0x10,0x10,0x10}; return g[row]; }
+        case 'R': { static const uint8_t g[7] = {0x1E,0x11,0x11,0x1E,0x14,0x12,0x11}; return g[row]; }
+        case 'S': { static const uint8_t g[7] = {0x0F,0x10,0x10,0x0E,0x01,0x01,0x1E}; return g[row]; }
+        case 'T': { static const uint8_t g[7] = {0x1F,0x04,0x04,0x04,0x04,0x04,0x04}; return g[row]; }
+        case 'U': { static const uint8_t g[7] = {0x11,0x11,0x11,0x11,0x11,0x11,0x0E}; return g[row]; }
         case '.': { static const uint8_t g[7] = {0x00,0x00,0x00,0x00,0x00,0x0C,0x0C}; return g[row]; }
         case ' ': return 0;
         default:  return 0x1F;
@@ -113,6 +123,7 @@ static void draw_char5x7(int x0, int y0, char c, uint8_t color)
                 panel_put(x0 + col, y0 + row, COLOR_BLACK);
             }
         }
+        panel_put(x0 + 5, y0 + row, COLOR_BLACK);
     }
 }
 
@@ -125,17 +136,25 @@ static void draw_text5x7(int x0, int y0, const char *text, uint8_t color)
     }
 }
 
-static void show_loading_screen(void)
+static void draw_unifor_splash(void)
 {
-    int x, y;
-    set_display_brightness(100);
-    init_panel_lut_small();
-    for (y = 0; y < VIEW_H; y++) {
-        for (x = 0; x < VIEW_W; x++) {
-            panel_put(x, y, COLOR_BLACK);
+    int x;
+    int y;
+
+    for (y = 0; y < UNIFOR_SPLASH_HEIGHT; y++) {
+        for (x = 0; x < UNIFOR_SPLASH_WIDTH; x++) {
+            panel_put(x, y, unifor_splash[y * UNIFOR_SPLASH_WIDTH + x]);
         }
     }
-    draw_text5x7(2, 58, "LOADING...", COLOR_GREEN);
+}
+
+static void show_loading_screen(void)
+{
+    set_display_brightness(100);
+    draw_unifor_splash();
+    draw_text5x7((VIEW_W - 6 * 6) / 2, 4, "UNIFOR", COLOR_GREEN);
+    draw_text5x7((VIEW_W - 6 * 5) / 2, 12, "C C T", COLOR_GREEN);
+    draw_text5x7((VIEW_W - 6 * 10) / 2 + 1, VIEW_H - 14, "LOADING...", COLOR_RED);
 }
 
 static unsigned char flash_read8(uint32_t flash_offset) {

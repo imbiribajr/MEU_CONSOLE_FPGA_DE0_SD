@@ -21,5 +21,5 @@ if not exist "Makefile" exit /b 1
 call "%NIOS_SHELL%" sh -c "cd \"%APP_DIR_CYG%\" && make clean all \"APP_CFLAGS_USER_FLAGS=-std=c99\" LINKER_SCRIPT=%LINKER_SCRIPT%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-call "%NIOS_SHELL%" sh -c "cd \"%APP_DIR_CYG%\" && nios2-download -g main.elf --accept-bad-sysid && nios2-terminal"
+call "%NIOS_SHELL%" sh -c "cd \"%APP_DIR_CYG%\" && nios2-download -r -g main.elf --accept-bad-sysid && nios2-terminal"
 endlocal
