@@ -33,11 +33,11 @@ Ao energizar a placa:
 
 Pac-Man rodando na matriz LED com a placa em primeiro plano:
 
-![Pac-Man na matriz LED](./fotos/IMG_20260413_175017.jpg)
+![Plataforma matriz LED](./fotos/IMG1.jpg)
 
 Launcher em execução com seleção de jogos no SD e controle Bluetooth via UART:
 
-![Launcher com controle Bluetooth](./fotos/IMG_20260413_180009.jpg)
+![Launcher com controle Bluetooth](./fotos/IMG2.jpg)
 
 ## Hardware
 
